@@ -66,22 +66,39 @@ const MENU_ITEMS = [
 
 export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredItems = activeCategory === "all" 
-    ? MENU_ITEMS 
-    : MENU_ITEMS.filter(item => item.category === activeCategory);
+  const filteredItems = MENU_ITEMS.filter((item) => {
+    const matchesCategory = activeCategory === "all" || item.category === activeCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          item.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       {/* Header */}
-      <div className="bg-gray-900 text-white py-16 text-center">
+      <div className="bg-gray-900 text-white py-16 text-center px-4">
         <h1 className="text-4xl font-bold mb-4">Our Menu</h1>
-        <p className="text-gray-400">Discover a fusion of flavors.</p>
+        <p className="text-gray-400 mb-8">Discover a fusion of flavors.</p>
+        
+        {/* Search Bar */}
+        <div className="max-w-md mx-auto relative">
+          <input
+            type="text"
+            placeholder="Search dishes..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-12 pr-4 py-3 rounded-full bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          />
+          <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
+        </div>
       </div>
 
       {/* Filters */}
       <div className="sticky top-20 bg-white shadow-sm z-30 py-4 overflow-x-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-4 items-center">
+          <Filter className="h-5 w-5 text-gray-500 mr-2 flex-shrink-0" />
           {MENU_CATEGORIES.map((cat) => (
             <button
               key={cat.id}
